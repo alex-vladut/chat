@@ -1,4 +1,6 @@
 type Message @model {
   id: ID!
+  from: String!
+  to: String!
   text: String!
 }
