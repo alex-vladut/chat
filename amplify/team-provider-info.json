@@ -10,13 +10,6 @@
             "StackName": "amplify-chat-dev-173836",
             "StackId": "arn:aws:cloudformation:eu-central-1:648877925551:stack/amplify-chat-dev-173836/63d46a40-badf-11ea-80d5-06a85d409ac4",
             "AmplifyAppId": "d511jflm7dx5p"
-        },
-        "categories": {
-            "auth": {
-                "chatcc6428c3": {
-                    "hostedUIProviderCreds": "[]"
-                }
-            }
         }
     }
 }

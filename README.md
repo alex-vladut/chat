@@ -30,6 +30,8 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 ## 2-way SMS communication with AWS Pinpoint
 
 Possible issues:
-- I can't find any way to programatically request long codes (i.e. phone numbers). Seems to be possible through AWS Console only.
+- I can't find any way to programatically request long codes (i.e. phone numbers). Seems to be possible through AWS Console only. The option seems to be available on the other hand through Twilio: https://www.twilio.com/docs/phone-numbers/api/availablephonenumber-resource
 - There is a limit of 1 message per second per phone number. We need to take extra measures to address this limitation so that we don't end up with unsent messages.
 - The cost for a long code seems to be upfront per month. How are we going to manage the phone numbers? Can we reuse them between multiple locations? But then there is a problem because one clinic may receive a message from a patient of a previous clinic!
+- There is a limit of $1 by default which should be lifted when performing any real application: https://docs.aws.amazon.com/pinpoint/latest/userguide/channels-sms-awssupport-spend-threshold.html
+

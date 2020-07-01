@@ -1,12 +1,5 @@
 {
-	"auth": {
-		"chatcc6428c3": {
-			"service": "Cognito",
-			"providerPlugin": "awscloudformation",
-			"dependsOn": [],
-			"customAuth": false
-		}
-	},
+	"auth": {},
 	"api": {
 		"chat": {
 			"service": "AppSync",
@@ -15,13 +8,15 @@
 				"authConfig": {
 					"additionalAuthenticationProviders": [],
 					"defaultAuthentication": {
-						"authenticationType": "AMAZON_COGNITO_USER_POOLS",
-						"userPoolConfig": {
-							"userPoolId": "authchatcc6428c3"
+						"authenticationType": "API_KEY",
+						"apiKeyConfig": {
+							"description": "",
+							"apiKeyExpirationDays": 7
 						}
 					}
 				}
 			}
 		}
-	}
+	},
+	"function": {}
 }
