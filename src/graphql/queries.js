@@ -21,6 +21,8 @@ export const listMessages = /* GraphQL */ `
       items {
         id
         text
+        from
+        to
         createdAt
         updatedAt
       }

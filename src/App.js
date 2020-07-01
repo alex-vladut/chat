@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
 
 import { API, graphqlOperation } from "aws-amplify";
 import * as mutations from "./graphql/mutations";
 import * as queries from "./graphql/queries";
 
+import "./App.css";
+
 function App() {
   const [messages, setMessages] = useState([]);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [text, setText] = useState("");
 
   const fetchMessages = () => {
@@ -19,6 +22,14 @@ function App() {
     fetchMessages();
   }, []);
 
+  const handleFromChange = (e) => {
+    setFrom(e.target.value);
+  };
+
+  const handleToChange = (e) => {
+    setTo(e.target.value);
+  };
+
   const handleTextChange = (e) => {
     setText(e.target.value);
   };
@@ -26,9 +37,17 @@ function App() {
   const submit = (e) => {
     e.preventDefault();
 
-    API.graphql(graphqlOperation(mutations.createMessage, { input: { text } }))
+    if (!from || !to || !text) {
+      return;
+    }
+
+    API.graphql(
+      graphqlOperation(mutations.createMessage, { input: { from, to, text } })
+    )
       .then(() => {
         setText("");
+        setFrom("");
+        setTo("");
         fetchMessages();
       })
       .catch((err) => console.error(err));
@@ -36,10 +55,20 @@ function App() {
 
   return (
     <form onSubmit={submit} className="App">
+      <label>From:</label>
+      <input value={from} onChange={handleFromChange} />
+      <label>To:</label>
+      <input value={to} onChange={handleToChange} />
+      <label>Message:</label>
       <input value={text} onChange={handleTextChange} />
-      <button type="submit">Save</button>
+      <button type="submit">Send</button>
       {messages.map((message) => (
-        <p key={message.id}>{message.text}</p>
+        <div key={message.id}>
+          <h3>
+            From: {message.from} | To: {message.to}
+          </h3>
+          <p>{message.text}</p>
+        </div>
       ))}
     </form>
   );
