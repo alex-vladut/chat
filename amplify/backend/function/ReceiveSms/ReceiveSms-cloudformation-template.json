@@ -128,9 +128,27 @@
                   }
                 ]
               }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes"
+              ],
+              "Resource": {
+                "Ref": "customsmsReceiveSmsQueueArn"
+              }
             }
           ]
         }
+      }
+    },
+    "LambdaFunctionEventSourceMapping": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "Properties": {
+        "EventSourceArn": { "Ref": "customsmsReceiveSmsQueueArn" },
+        "FunctionName": { "Ref": "LambdaFunction" }
       }
     }
   },
