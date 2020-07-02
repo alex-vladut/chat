@@ -23,7 +23,7 @@ exports.handler = (event) => {
           },
           MessageConfiguration: {
             SMSMessage: {
-              Body: message,
+              Body: message.slice(0, Math.min(message.length, 140)),
               MessageType: messageType,
               OriginationNumber: originationNumber,
               SenderId: senderId,
