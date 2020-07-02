@@ -36,3 +36,5 @@ Possible issues:
 - There is a limit of $1 by default which should be lifted when performing any real application: https://docs.aws.amazon.com/pinpoint/latest/userguide/channels-sms-awssupport-spend-threshold.html
 - If the destination phone number is outside US then the origin will be a generic short code 1795. This may pose some complications as I don't think it's possible to enable 2-way communication in that case (it will probably not receive the messages from clients).
 - Investigation is needed to check the AWS Clouformation support for Pinpoint service, not sure if all the features are available.
+- What is the maximum number of long codes that can be provisioned per AWS account? I didn't find anything specified, but most of the time they have such limits. https://docs.aws.amazon.com/pinpoint/latest/developerguide/quotas.html#quotas-sms
+- Might be useful to use this feature for validating phone numbers as in that way you know which country the number is registered in and maybe only send SMS if it's US based (or send a different SMS message): https://docs.aws.amazon.com/pinpoint/latest/developerguide/validate-phone-numbers.html
