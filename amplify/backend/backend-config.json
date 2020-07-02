@@ -30,6 +30,18 @@
           "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput"]
         }
       ]
+    },
+    "ReceiveSms": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "custom",
+          "resourceName": "sms",
+          "attributes": ["ReceiveSmsQueueArn"]
+        }
+      ]
     }
   },
   "custom": {
