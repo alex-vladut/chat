@@ -1,53 +1,70 @@
 {
-  "auth": {},
-  "api": {
-    "chat": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
-      "output": {
-        "authConfig": {
-          "additionalAuthenticationProviders": [],
-          "defaultAuthentication": {
-            "authenticationType": "API_KEY",
-            "apiKeyConfig": {
-              "description": "",
-              "apiKeyExpirationDays": 7
+    "auth": {},
+    "api": {
+        "chat": {
+            "service": "AppSync",
+            "providerPlugin": "awscloudformation",
+            "output": {
+                "authConfig": {
+                    "additionalAuthenticationProviders": [
+                        {
+                            "authenticationType": "AWS_IAM"
+                        }
+                    ],
+                    "defaultAuthentication": {
+                        "authenticationType": "API_KEY",
+                        "apiKeyConfig": {
+                            "description": "",
+                            "apiKeyExpirationDays": 7
+                        }
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  },
-  "function": {
-    "SendSMS": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": [
-        {
-          "category": "api",
-          "resourceName": "chat",
-          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput"]
-        }
-      ]
     },
-    "ReceiveSms": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": [
-        {
-          "category": "custom",
-          "resourceName": "sms",
-          "attributes": ["ReceiveSmsQueueArn"]
+    "function": {
+        "SendSMS": {
+            "build": true,
+            "providerPlugin": "awscloudformation",
+            "service": "Lambda",
+            "dependsOn": [
+                {
+                    "category": "api",
+                    "resourceName": "chat",
+                    "attributes": [
+                        "GraphQLAPIIdOutput",
+                        "GraphQLAPIEndpointOutput"
+                    ]
+                }
+            ]
+        },
+        "ReceiveSms": {
+            "build": true,
+            "providerPlugin": "awscloudformation",
+            "service": "Lambda",
+            "dependsOn": [
+                {
+                    "category": "custom",
+                    "resourceName": "sms",
+                    "attributes": [
+                        "ReceiveSmsQueueArn"
+                    ]
+                },
+                {
+                    "category": "api",
+                    "resourceName": "chat",
+                    "attributes": [
+                        "GraphQLAPIIdOutput",
+                        "GraphQLAPIEndpointOutput"
+                    ]
+                }
+            ]
         }
-      ]
+    },
+    "custom": {
+        "sms": {
+            "service": "SNSAndSQS",
+            "providerPlugin": "awscloudformation"
+        }
     }
-  },
-  "custom": {
-    "sms": {
-      "service": "SNSAndSQS",
-      "providerPlugin": "awscloudformation"
-    }
-  }
 }

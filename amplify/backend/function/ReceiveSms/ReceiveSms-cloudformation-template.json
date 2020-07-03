@@ -13,6 +13,14 @@
     "customsmsReceiveSmsQueueArn": {
       "Type": "String",
       "Default": "customsmsReceiveSmsQueueArn"
+    },
+    "apichatGraphQLAPIIdOutput": {
+      "Type": "String",
+      "Default": "apichatGraphQLAPIIdOutput"
+    },
+    "apichatGraphQLAPIEndpointOutput": {
+      "Type": "String",
+      "Default": "apichatGraphQLAPIEndpointOutput"
     }
   },
   "Conditions": {
@@ -59,6 +67,12 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "API_CHAT_GRAPHQLAPIID": {
+              "Ref": "apichatGraphQLAPIIdOutput"
+            },
+            "API_CHAT_GRAPHQLAPIENDPOINT": {
+              "Ref": "apichatGraphQLAPIEndpointOutput"
             }
           }
         },
@@ -139,6 +153,32 @@
               "Resource": {
                 "Ref": "customsmsReceiveSmsQueueArn"
               }
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["appsync:GraphQL"],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:appsync:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":apis/",
+                      {
+                        "Ref": "apichatGraphQLAPIIdOutput"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
             }
           ]
         }
