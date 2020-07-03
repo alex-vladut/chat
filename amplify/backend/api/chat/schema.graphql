@@ -1,4 +1,11 @@
-type Message @model {
+type Message
+  @model
+  @auth(
+    rules: [
+      { allow: public, provider: apiKey, operations: [create, update, read] }
+      { allow: private, provider: iam, operations: [create] }
+    ]
+  ) {
   id: ID!
   from: String!
   to: String!
