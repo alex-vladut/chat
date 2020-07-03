@@ -1,18 +1,12 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "An auto-generated nested stack.",
+  "Description": "Custom CloudFormation stack to define resuorces required to receive SMS messages.",
   "Metadata": {},
   "Parameters": {
     "env": {
       "Type": "String",
       "Description": "The environment name. e.g. Dev, Test, or Production",
       "Default": "NONE"
-    }
-  },
-  "Resources": {
-    "EmptyResource": {
-      "Type": "Custom::EmptyResource",
-      "Condition": "AlwaysFalse"
     }
   },
   "Conditions": {
@@ -28,14 +22,103 @@
         }
       ]
     },
-    "AlwaysFalse": {
-      "Fn::Equals": ["true", "false"]
+    "ShouldNotCreateEnvResources": {
+      "Fn::Equals": [
+        {
+          "Ref": "env"
+        },
+        "NONE"
+      ]
+    }
+  },
+  "Resources": {
+    "ReceiveSmsTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "TopicName": {
+          "Fn::If": [
+            "ShouldNotCreateEnvResources",
+            "ReceiveSmsTopic",
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "ReceiveSmsTopic",
+                  "-",
+                  {
+                    "Ref": "env"
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "ReceiveSmsQueue": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "QueueName": {
+          "Fn::If": [
+            "ShouldNotCreateEnvResources",
+            "ReceiveSmsQueue",
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "ReceiveSmsQueue",
+                  "-",
+                  {
+                    "Ref": "env"
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "ReceiveSmsQueuePolicy": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": "sns.amazonaws.com" },
+              "Action": ["sqs:SendMessage"],
+              "Resource": "*",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Ref": "ReceiveSmsTopic"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "Queues": [{ "Ref": "ReceiveSmsQueue" }]
+      }
+    },
+    "SnsSubscription": {
+      "DependsOn": ["ReceiveSmsTopic", "ReceiveSmsQueue"],
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Protocol": "sqs",
+        "RawMessageDelivery": true,
+        "Endpoint": {
+          "Fn::GetAtt": ["ReceiveSmsQueue", "Arn"]
+        },
+        "TopicArn": { "Ref": "ReceiveSmsTopic" }
+      }
     }
   },
   "Outputs": {
-    "EmptyOutput": {
-      "Description": "An empty output. You may delete this if you have at least one resource above.",
-      "Value": ""
+    "ReceiveSmsQueueArn": {
+      "Value": {
+        "Fn::GetAtt": ["ReceiveSmsQueue", "Arn"]
+      }
     }
   }
 }
