@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { API, graphqlOperation } from "aws-amplify";
 import * as mutations from "./graphql/mutations";
 import * as queries from "./graphql/queries";
+import * as subscriptions from "./graphql/subscriptions";
 
 import "./App.css";
 
@@ -20,6 +21,10 @@ function App() {
 
   useEffect(() => {
     fetchMessages();
+
+    API.graphql(graphqlOperation(subscriptions.onCreateMessage)).subscribe(() =>
+      fetchMessages()
+    );
   }, []);
 
   const handleFromChange = (e) => {
